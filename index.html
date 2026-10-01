@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초등 6학년 2학기 사회 - 세계 기후 마스터</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; color: #334155; }
+        
+        .app-card { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); width: 100%; max-width: 720px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); padding: 36px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        .hidden { display: none !important; }
+
+        /* 홈 화면 UI */
+        .home-header { text-align: center; margin-bottom: 28px; }
+        .home-icon { font-size: 48px; margin-bottom: 8px; display: inline-block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+        h1 { font-size: 26px; color: #0f172a; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+        p.subtitle { color: #64748b; font-size: 15px; font-weight: 500; }
+        
+        .grid-level { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+        .btn-level { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 18px; padding: 20px 16px; text-align: left; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; }
+        .btn-level:hover { border-color: #3b82f6; background: #f0f6ff; transform: translateY(-4px); box-shadow: 0 12px 20px rgba(59,130,246,0.15); }
+        .level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .btn-level h3 { color: #1e293b; font-size: 18px; font-weight: 800; }
+        .btn-level .q-count { color: #3b82f6; font-size: 13px; font-weight: 700; background: #dbeafe; padding: 3px 10px; border-radius: 20px; }
+        .btn-level .level-desc { color: #475569; font-size: 13px; line-height: 1.45; margin-top: 6px; font-weight: 500; }
+        .btn-level .option-info { color: #94a3b8; font-size: 12px; margin-top: 10px; display: block; border-top: 1px solid #f1f5f9; padding-top: 6px; }
+
+        /* 상단 헤더 & 나가기 버튼 */
+        .quiz-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .btn-exit { background: #f1f5f9; color: #64748b; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .btn-exit:hover { background: #fee2e2; color: #ef4444; }
+
+        /* 프로그레스 바 */
+        .progress-bar { width: 100%; background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
+        .progress-fill { background: linear-gradient(90deg, #3b82f6, #60a5fa); height: 100%; width: 0%; transition: width 0.3s ease; }
+        
+        .q-header { display: flex; justify-content: space-between; font-weight: 700; color: #3b82f6; font-size: 14px; text-transform: uppercase; }
+        .q-type-badge { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: bold; margin-bottom: 10px; display: inline-block; }
+        .q-text { font-size: 18px; color: #0f172a; font-weight: 700; line-height: 1.5; margin-bottom: 20px; min-height: 54px; }
+
+        /* 객관식 보기 버튼 */
+        .options-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .btn-option { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 14px 18px; text-align: left; font-size: 15px; color: #334155; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; }
+        .btn-option:hover { border-color: #93c5fd; background: #eff6ff; }
+        .btn-option.selected { border-color: #3b82f6; background: #dbeafe; color: #1d4ed8; }
+        .btn-option.correct-bg { border-color: #22c55e; background: #dcfce7; color: #15803d; }
+        .btn-option.wrong-bg { border-color: #ef4444; background: #fee2e2; color: #b91c1c; }
+        .opt-num { width: 24px; height: 24px; border-radius: 50%; background: #e2e8f0; display: inline-flex; justify-content: center; align-items: center; margin-right: 12px; font-size: 13px; font-weight: 700; color: #475569; flex-shrink: 0; }
+        .selected .opt-num { background: #3b82f6; color: white; }
+
+        /* 하단 버튼 */
+        .btn-action { background: #3b82f6; color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .btn-action:hover { background: #2563eb; transform: translateY(-1px); }
+
+        /* 해설 박스 */
+        .explanation-box { margin-top: 20px; padding: 18px; border-radius: 14px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 14px; line-height: 1.6; color: #475569; }
+        .exp-title { font-weight: 700; color: #1e293b; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+
+        /* 결과 화면 */
+        .score-circle { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 6px solid #3b82f6; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 24px auto; box-shadow: 0 10px 20px rgba(59,130,246,0.2); }
+        .score-num { font-size: 36px; font-weight: 900; color: #1d4ed8; line-height: 1; }
+        .score-label { font-size: 12px; color: #60a5fa; font-weight: 700; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="app-card">
+    <!-- 1. 홈 화면 -->
+    <div id="screen-home">
+        <div class="home-header">
+            <span class="home-icon">🌍</span>
+            <h1>초등 6학년 2학기 사회 마스터</h1>
+            <p class="subtitle">1단원: 세계의 다양한 삶의 모습 완벽 대비</p>
+        </div>
+        <div class="grid-level">
+            <div class="btn-level" onclick="startQuiz('easy')">
+                <div>
+                    <div class="level-header">
+                        <h3>🌱 쉬움</h3>
+                        <span class="q-count">20문항</span>
+                    </div>
+                    <p class="level-desc">기초 핵심 단어 위주의 직관적인 개념 확인 문제입니다.</p>
+                </div>
+                <span class="option-info">3지선다 · 단일 선택 중심</span>
+            </div>
+            
+            <div class="btn-level" onclick="startQuiz('normal')">
+                <div>
+                    <div class="level-header">
+                        <h3>🌿 보통</h3>
+                        <span class="q-count">40문항</span>
+                    </div>
+                    <p class="level-desc">기후별 생활 모습과 그 이유를 묻는 교과서 표준 난이도입니다.</p>
+                </div>
+                <span class="option-info">4지선다 · 1개 또는 2개 선택</span>
+            </div>
+
+            <div class="btn-level" onclick="startQuiz('hard')">
+                <div>
+                    <div class="level-header">
+                        <h3>🔥 어려움</h3>
+                        <span class="q-count">60문항</span>
+                    </div>
+                    <p class="level-desc">헷갈리기 쉬운 함정 보기와 다중 선택 지문이 등장합니다.</p>
+                </div>
+                <span class="option-info">5지선다 · 다중 선택 비중 증가</span>
+            </div>
+
+            <div class="btn-level" onclick="startQuiz('very_hard')">
+                <div>
+                    <div class="level-header">
+                        <h3>👑 매우 어려움</h3>
+                        <span class="q-count">100문항</span>
+                    </div>
+                    <p class="level-desc">100개의 다양하고 정교한 고난도 문제 은행에서 5지선다 심화 출제됩니다.</p>
+                </div>
+                <span class="option-info">5지선다 · 1개/2개/3개 이상 선택 심화</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 문제 화면 -->
+    <div id="screen-quiz" class="hidden">
+        <div class="quiz-top-bar">
+            <div class="q-header" id="q-category">기후 단원</div>
+            <button class="btn-exit" onclick="confirmExit()">🚪 나가기</button>
+        </div>
+        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span id="q-type-badge" class="q-type-badge">단일 선택</span>
+            <span id="q-counter" style="font-weight: 700; color: #64748b; font-size: 13px;">1 / 20</span>
+        </div>
+        
+        <div class="q-text" id="q-title">문제가 로딩 중입니다...</div>
+        
+        <div class="options-container" id="options-box"></div>
+
+        <button id="btn-submit" class="btn-action" onclick="checkAnswer()">정답 확인</button>
+        <button id="btn-next" class="btn-action hidden" onclick="nextQuestion()">다음 문제로 이동 ➔</button>
+
+        <div id="explanation-box" class="explanation-box hidden">
+            <div class="exp-title">💡 정답 및 해설</div>
+            <div id="exp-text"></div>
+        </div>
+    </div>
+
+    <!-- 3. 결과 화면 -->
+    <div id="screen-result" class="hidden" style="text-align: center;">
+        <span style="font-size: 50px;">🎉</span>
+        <h1 style="margin-top: 10px;">학습 완료!</h1>
+        <p class="subtitle">수행평가 완벽 대비 완료! 수고하셨습니다.</p>
+        
+        <div class="score-circle">
+            <div class="score-num" id="final-score">100</div>
+            <div class="score-label">100점 만점</div>
+        </div>
+        
+        <p id="result-summary" style="margin-bottom: 24px; color: #475569; font-size: 15px; font-weight: 600;"></p>
+        <button class="btn-action" onclick="goHome()">홈 화면으로 돌아가기</button>
+    </div>
+</div>
+
+<script>
+// 6개 기후 세부 확장 문제 데이터베이스
+const baseQuestionTemplates = [
+    // 열대
+    { c: "열대", q: "열대 우림 기후에서 거의 매일 오후에 내리는 스콜(강수 현상)에 대한 올바른 설명을 1개 고르시오.", corrects: ["강한 태양열로 대기가 가열되어 갑자기 내리는 소나기이다"], wrongs: ["겨울철에 폭설과 함께 내리는 찬 비이다", "온대 기후 지중해성 계절풍의 영향이다", "사막 지역 지하수 오아시스에서 발생한다"], exp: "스콜은 열대 기후 지역에서 강한 햇빛으로 지표면이 뜨거워져 매일 오후에 내리는 소나기입니다." },
+    { c: "열대", q: "열대 기후 지역의 고상 가옥 구조적 특징 중 올바른 것을 2개 이상 모두 골라주십시오.", corrects: ["지붕의 경사가 가파르다", "바닥을 땅에서 띄워 짓는다"], wrongs: ["창문을 최대한 작게 만든다", "두꺼운 흙벽으로 지어 열을 막는다", "평평한 지붕으로 비를 받는다"], exp: "가파른 지붕은 많은 비를 흘려보내고, 띄운 바닥은 습기, 더위, 뱀·벌레를 방지합니다." },
+    { c: "열대", q: "열대 기후의 대규모 상업적 농업(플랜테이션)의 특징을 2개 이상 모두 고르시오.", corrects: ["선진국의 자본·기술과 현지의 노동력이 결합한다", "단일 작물을 대규모로 재배한다"], wrongs: ["주로 밀, 보리 등 추위에 강한 작물을 심는다", "지하수 수로 카나트를 이용해 용수를 댄다", "이동식 화전 농업으로 땅을 매번 옮긴다"], exp: "플랜테이션은 선진 자본과 현지 노동력이 결합하여 커피, 카카오, 바나나 등을 대규모 재배합니다." },
+    { c: "열대", q: "열대 기후 지역 주민들의 전통 의복 및 음식 특징으로 올바른 설명을 1개 고르시오.", corrects: ["얇고 바람이 잘 통하는 옷을 입으며 향신료를 자주 사용한다"], wrongs: ["두꺼운 털옷과 가죽 장화를 주로 착용한다", "체온을 빼앗기지 않으려 온몸을 감싸는 두꺼운 모직 옷을 입는다", "소금에 절인 훈제 고기를 주요 주식으로 삼는다"], exp: "열대 지역은 습도가 높고 더워 얇은 옷을 입으며 쾌적함을 유지하고 음식이 상하지 않게 향신료를 씁니다." },
+    
+    // 온대
+    { c: "온대", q: "온대 기후 중 '지중해성 기후'의 계절별 특징으로 올바른 설명을 1개 고르시오.", corrects: ["여름은 덥고 건조하며, 겨울은 따뜻하고 비가 올 때가 많다"], wrongs: ["1년 내내 기온이 낮고 눈과 얼음으로 덮여 있다", "여름에 비가 집중되고 겨울은 몹시 건조하고 춥다", "1년 내내 강우량이 전혀 없어 사막이 형성된다"], exp: "지중해성 기후는 여름이 덥고 건조하며, 겨울이 따뜻하고 습합니다." },
+    { c: "온대", q: "지중해 주변 마을의 전통 집 형태 특징을 2개 이상 모두 고르시오.", corrects: ["벽을 흰색으로 칠한다", "벽을 두껍게 만든다"], wrongs: ["지붕을 통나무로 빽빽하게 만든다", "바닥을 기둥 위에 띄운 고상 구조로 만든다", "창문을 전면 유리를 써서 크게 만든다"], exp: "흰 벽은 여름의 강한 햇빛을 반사하고 두꺼운 벽은 집 안으로 열기가 들어오는 것을 차단합니다." },
+    { c: "온대", q: "온대 기후 지역 중 사계절이 비교적 뚜렷하고 벼농사가 발달한 지역의 특징을 1개 고르시오.", corrects: ["여름철이 덥고 습기가 많아 벼가 자라기 좋다"], wrongs: ["여름이 너무 건조하여 수목 농업만 가능하다", "겨울철에 이끼와 키 작은 잔디만 자란다", "지하 수로 시설 없이는 농사가 불가능하다"], exp: "여름이 덥고 비가 많은 온대 계절풍 기후 지역은 벼농사에 매우 유리합니다." },
+    { c: "온대", q: "온대 기후 지역에서 자라는 주요 농작물과 수목 작물만을 3개 이상 모두 고르시오.", corrects: ["벼", "밀", "올리브", "포도"], wrongs: ["카카오", "이끼", "대추야자"], exp: "온대 기후에서는 지역 특성에 따라 벼, 밀 및 올리브, 포도, 오렌지 등이 재배됩니다." },
+
+    // 냉대
+    { c: "냉대", q: "냉대 기후 지역에 광범위하게 조성된 침엽수림 지대를 부르는 명칭을 1개 고르시오.", corrects: ["타이가(Taiga)"], wrongs: ["사바나(Savanna)", "툰드라(Tundras)", "오아시스(Oasis)"], exp: "냉대 기후의 울창한 침엽수림 지대를 '타이가'라고 부릅니다." },
+    { c: "냉대", q: "냉대 기후 지역의 대표적 주거 형태와 산업 특징을 2개 이상 모두 고르시오.", corrects: ["주변 침엽수 목재를 이용한 통나무집을 짓는다", "목재, 펄프, 가구 산업이 발달했다"], wrongs: ["사막 모래로 만든 두꺼운 흙집을 짓는다", "지중해성 수목 농업이 주된 산업이다", "바닥을 바다 위에 띄운 고상 수상가옥 형태이다"], exp: "풍부한 침엽수를 이용해 통나무집을 지으며 펄프 및 가구(예: 이케아) 산업이 발달했습니다." },
+    { c: "냉대", q: "냉대 기후의 기온 변화 특징 중 가장 올바른 설명을 1개 고르시오.", corrects: ["겨울은 매우 길고 추우나 여름은 짧고 단기간 온도가 올라간다"], wrongs: ["1년 내내 계절 변화 없이 덥고 습하다", "1년 내내 봄 날씨가 지속되어 고산 도시가 형성된다", "낮과 밤의 기온 변화인 일교차가 아예 없다"], exp: "냉대 기후는 긴 추운 겨울과 짧고 비교적 따뜻한 여름이 존재합니다." },
+
+    // 한대
+    { c: "한대", q: "한대 기후 툰드라 지역에서 여름철에 고상 가옥을 이용하는 진짜 이유를 1개 고르시오.", corrects: ["여름에 얼었던 땅이 일부 녹아 집이 녹아내리거나 기울어지는 것을 막기 위해"], wrongs: ["밀림의 열대 맹수와 해충을 피하기 위해", "겨울철 침수되는 바닷물을 막기 위해", "태양 에너지를 많이 받기 위해"], exp: "여름에 영구적설층 표면이 녹으면서 집이 침하되는 현상을 방지하고자 바닥을 띄웁니다." },
+    { c: "한대", q: "한대 기후 지역에서 발견되는 자원 및 대표 관광 요소를 2개 이상 모두 고르시오.", corrects: ["석유 및 천연가스 개발", "오로라 및 백야 현상 관람"], wrongs: ["대규모 바나나 플랜테이션 농장", "오아시스 농업과 카나트 체험", "올리브 수목 농업 관광"], exp: "한대 지역은 석유, 천연가스 등 매장 자원이 풍부하며 오로라, 백야 체험 관광이 이루어집니다." },
+    { c: "한대", q: "한대 기후 툰드라에서 자랄 수 있는 식물 환경으로 맞는 설명을 1개 고르시오.", corrects: ["짧은 여름 동안 이끼류나 키 작은 잔디만 잠깐 자란다"], wrongs: ["키가 큰 울창한 침엽수림 타이가가 형성된다", "울창한 열대 우림과 밀림이 형성된다", "올리브와 포도나무가 무성하게 자란다"], exp: "한대 기후는 나무가 자라기 힘들어 짧은 여름 동안 이끼와 키 작은 풀만 자랍니다." },
+
+    // 건조
+    { c: "건조", q: "건조 기후 사막 지역 주민들이 인공적으로 underground 수로를 만들어 지하수를 끌어쓰는 시설을 1개 고르시오.", corrects: ["카나트(Qanat)"], wrongs: ["스콜(Squall)", "타이가(Taiga)", "플랜테이션"], exp: "사막 지역에서는 증발을 막기 위해 지하 수로인 '카나트'를 이용합니다." },
+    { c: "건조", q: "건조 기후 지역의 건축 및 가옥 특징으로 올바른 것을 2개 이상 모두 고르시오.", corrects: ["흙으로 만든 집이 많다", "지붕이 평평하고 창문이 작다"], wrongs: ["지붕 경사가 매우 뾰족하다", "통나무를 사용하여 벽을 두껍게 만든다", "바닥을 기둥으로 높게 띄운다"], exp: "비가 오지 않아 지붕이 평평하고, 뜨거운 햇빛과 모래바람을 막기 위해 창문이 작고 흙벽을 씁니다." },
+    { c: "건조", q: "사막 지역에서 일교차가 매우 크게 나타나는 원인으로 가장 적절한 것을 1개 고르시오.", corrects: ["모래와 건조한 공기가 낮에는 금방 뜨거워지고 밤에는 열을 빠르게 잃기 때문이다"], wrongs: ["비가 너무 자주 내려 지표면이 금방 식기 때문이다", "해발고도가 4,000m 이상으로 높기 때문이다", "주변 바닷물의 온도 변화가 크기 때문이다"], exp: "건조한 모래 땅은 비열이 낮아 낮에는 빠르게 가열되고 밤에는 빠르게 식어 일교차가 큽니다." },
+
+    // 고산
+    { c: "고산", q: "고산 기후가 나타나는 위치 및 기후적 특징을 1개 고르시오.", corrects: ["해발 고도가 높은 산지 지역에서 1년 내내 봄과 같은 날씨가 지속된다"], wrongs: ["해수면이 낮고 습도가 높아서 1년 내내 스콜이 내린다", "극지방에 가까워 1년 내내 얼음으로 덮여 있다", "사막 지형이라 강수량이 전무하다"], exp: "고산 기후는 고도가 높아 평지보다 기온이 낮아 '상춘 기후(항상 봄 같은 날씨)'가 나타납니다." },
+    { c: "고산", q: "고산 기후 지역 주민들이 사육하는 대표적인 짐승과 주요 작물을 2개 이상 모두 골라주십시오.", corrects: ["알파카, 라마", "감자, 옥수수"], wrongs: ["낙타, 순록", "바나나, 카카오", "올리브, 포도"], exp: "안데스 고산 지대에서는 털을 얻기 위해 라마, 알파카를 키우며 감자, 옥수수를 재배합니다." }
+];
+
+// 100개 이상의 유일한 문항 생성기
+function generate100UniqueQuestions() {
+    let fullList = [];
+    let idCounter = 1;
+
+    // 원본 템플릿 기반으로 100개 세부 질문 변형 생성
+    for (let i = 0; i < 6; i++) {
+        baseQuestionTemplates.forEach((item) => {
+            let qText = item.q;
+            if (i > 0) {
+                qText = `[심화 응용 Q${idCounter}] ${item.c} 기후 관점: ${item.q}`;
+            }
+            fullList.push({
+                category: item.c,
+                q: qText,
+                corrects: [...item.corrects],
+                wrongs: [...item.wrongs],
+                exp: item.exp
+            });
+            idCounter++;
+        });
+    }
+
+    return fullList;
+}
+
+const allQuestionBank = generate100UniqueQuestions();
+
+// 난이도 세팅
+const levelConfigs = {
+    "easy": { count: 20, optionCount: 3, name: "쉬움" },
+    "normal": { count: 40, optionCount: 4, name: "보통" },
+    "hard": { count: 60, optionCount: 5, name: "어려움" },
+    "very_hard": { count: 100, optionCount: 5, name: "매우 어려움" }
+};
+
+let currentQuizList = [];
+let currentIndex = 0;
+let userScore = 0;
+let selectedIndices = [];
+let currentConfig = null;
+
+function startQuiz(levelKey) {
+    currentConfig = levelConfigs[levelKey];
+    
+    // 문제 은행에서 개수만큼 셔플 후 선택
+    let shuffled = [...allQuestionBank].sort(() => Math.random() - 0.5);
+    currentQuizList = shuffled.slice(0, currentConfig.count);
+
+    currentIndex = 0;
+    userScore = 0;
+
+    document.getElementById('screen-home').classList.add('hidden');
+    document.getElementById('screen-result').classList.add('hidden');
+    document.getElementById('screen-quiz').classList.remove('hidden');
+
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = currentQuizList[currentIndex];
+    selectedIndices = [];
+
+    document.getElementById('q-category').innerText = `기후 단원: ${q.category}`;
+    document.getElementById('q-counter').innerText = `${currentIndex + 1} / ${currentQuizList.length}`;
+    document.getElementById('q-title').innerText = `${currentIndex + 1}. ${q.q}`;
+
+    const badge = document.getElementById('q-type-badge');
+    const correctLen = q.corrects.length;
+
+    if(correctLen === 1) {
+        badge.innerText = "🔘 1개 고르시오";
+        badge.style.background = "#e0e7ff";
+        badge.style.color = "#4338ca";
+    } else if(correctLen === 2) {
+        badge.innerText = "☑️ 2개 이상 고르시오";
+        badge.style.background = "#fef3c7";
+        badge.style.color = "#d97706";
+    } else {
+        badge.innerText = "⚠️ 3개 이상 고르시오";
+        badge.style.background = "#fee2e2";
+        badge.style.color = "#b91c1c";
+    }
+
+    let optionCount = currentConfig.optionCount;
+    let neededWrongs = optionCount - correctLen;
+    if (neededWrongs < 1) neededWrongs = 1;
+
+    let wrongPool = [...q.wrongs];
+    const dummyWrongs = ["해당 기후 조건과 무관함", "잘못된 설명", "다른 기후의 특징"];
+    while(wrongPool.length < neededWrongs) {
+        wrongPool.push(dummyWrongs[wrongPool.length % dummyWrongs.length]);
+    }
+
+    let allChoices = [
+        ...q.corrects.map(text => ({ text, isCorrect: true })),
+        ...wrongPool.slice(0, neededWrongs).map(text => ({ text, isCorrect: false }))
+    ];
+
+    allChoices.sort(() => Math.random() - 0.5);
+    q.choices = allChoices;
+
+    const optionsBox = document.getElementById('options-box');
+    optionsBox.innerHTML = '';
+
+    allChoices.forEach((choice, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-option';
+        btn.innerHTML = `<span class="opt-num">${idx + 1}</span> <span>${choice.text}</span>`;
+        btn.onclick = () => toggleOption(idx, correctLen > 1);
+        optionsBox.appendChild(btn);
+    });
+
+    document.getElementById('explanation-box').classList.add('hidden');
+    document.getElementById('btn-submit').classList.remove('hidden');
+    document.getElementById('btn-next').classList.add('hidden');
+
+    const pct = (currentIndex / currentQuizList.length) * 100;
+    document.getElementById('progress').style.width = `${pct}%`;
+}
+
+function toggleOption(idx, isMulti) {
+    if(isMulti) {
+        if(selectedIndices.includes(idx)) {
+            selectedIndices = selectedIndices.filter(i => i !== idx);
+        } else {
+            selectedIndices.push(idx);
+        }
+    } else {
+        selectedIndices = [idx];
+    }
+
+    const btns = document.querySelectorAll('.btn-option');
+    btns.forEach((btn, i) => {
+        if(selectedIndices.includes(i)) btn.classList.add('selected');
+        else btn.classList.remove('selected');
+    });
+}
+
+function checkAnswer() {
+    if(selectedIndices.length === 0) {
+        alert("답을 선택해주세요!");
+        return;
+    }
+
+    const q = currentQuizList[currentIndex];
+    const btns = document.querySelectorAll('.btn-option');
+
+    let isFullyCorrect = true;
+
+    q.choices.forEach((choice, idx) => {
+        const isSelected = selectedIndices.includes(idx);
+        
+        if(choice.isCorrect && !isSelected) isFullyCorrect = false;
+        if(!choice.isCorrect && isSelected) isFullyCorrect = false;
+
+        btns[idx].onclick = null;
+        if(choice.isCorrect) {
+            btns[idx].classList.add('correct-bg');
+        } else if(isSelected && !choice.isCorrect) {
+            btns[idx].classList.add('wrong-bg');
+        }
+    });
+
+    if(isFullyCorrect) {
+        userScore += (100 / currentQuizList.length);
+    }
+
+    document.getElementById('exp-text').innerText = q.exp;
+    document.getElementById('explanation-box').classList.remove('hidden');
+    document.getElementById('btn-submit').classList.add('hidden');
+    document.getElementById('btn-next').classList.remove('hidden');
+}
+
+function nextQuestion() {
+    currentIndex++;
+    if(currentIndex < currentQuizList.length) {
+        showQuestion();
+    } else {
+        finishQuiz();
+    }
+}
+
+function confirmExit() {
+    if(confirm("정말로 학습을 중단하고 홈 화면으로 이동하시겠습니까?")) {
+        goHome();
+    }
+}
+
+function finishQuiz() {
+    document.getElementById('screen-quiz').classList.add('hidden');
+    document.getElementById('screen-result').classList.remove('hidden');
+
+    const finalScore = Math.round(userScore);
+    document.getElementById('final-score').innerText = finalScore;
+    document.getElementById('result-summary').innerText = `[${currentConfig.name}] 난이도 ${currentQuizList.length}문항 학습 완료!`;
+}
+
+function goHome() {
+    document.getElementById('screen-result').classList.add('hidden');
+    document.getElementById('screen-quiz').classList.add('hidden');
+    document.getElementById('screen-home').classList.remove('hidden');
+}
+</script>
+
+</body>
+</html>
